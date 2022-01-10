@@ -128,7 +128,7 @@ void loop() {
         Stop();
     }
 
-    delay(1000);
+    delay(500);
 }
 
 void wheelControl(int speedL, int speedR) {
@@ -163,7 +163,9 @@ void wheelControl(int speedL, int speedR) {
     // PWM Output
     ledcWrite(pwmChannel1, abs(speedL) + 160);
     ledcWrite(pwmChannel2, abs(speedR) + 160);
-    delay(100);
+    delay(50);
+
+    Stop();
 }
 
 void goBackward() {
@@ -171,15 +173,19 @@ void goBackward() {
 }
 
 void goForward() {
-    wheelControl(45, 55);
+    wheelControl(45, 40);
 }
 
 void goLeft() {
-    wheelControl(-90, 90);
+    goForward();
+    delay(500);
+    wheelControl(0, 50);
 }
 
 void goRight() {
-    wheelControl(90, -90);
+    goForward();
+    delay(500);
+    wheelControl(50, 0);
 }
 
 void Stop() {
@@ -187,7 +193,6 @@ void Stop() {
     digitalWrite(motorLPin2, LOW);
     digitalWrite(motorRPin1, LOW);
     digitalWrite(motorRPin2, LOW);
-    delay(1000);
 }
 
 /*

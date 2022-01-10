@@ -102,6 +102,7 @@ def CV():
 		try:
 			# 計算影象高度的一半
 			HEIGHT = (img.shape[0] * 3) // 4
+			WIDTH = (img.shape[1])
 
 			# canny邊緣檢測
 			blur = cv2.GaussianBlur(img, (5, 5), 0)
@@ -116,6 +117,7 @@ def CV():
 			lines = cv2.HoughLinesP(img_houghP, 1, np.pi/360, 10, minLineLength=10, maxLineGap=25)
 
 			m = []  # 斜率集合
+			p_midx = []	# 中間 x 集合，可用以判斷路線是否在正中央
 
 			print('=' * 100)
 
@@ -134,6 +136,7 @@ def CV():
 					# _m == 0 if line is vertical
 					_m = (l[2] - l[0]) / (l[3] - l[1])
 					if abs(_m) > 0.001:
+						p_midx.append((l[2] + l[0])/2)
 						m.append(_m)
 
 					cv2.line(img_output, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 5)
@@ -142,7 +145,9 @@ def CV():
 
 			# 
 			m_avg = sum(m) / len(m)
-			print(m_avg)
+			p_midx_avg = sum(p_midx) / len(p_midx)
+			print(f'm_avg :\t{m_avg}')
+			print(f'p_midx_avg :\t{p_midx_avg}')
 
 			M_BOUND_R, M_BOUND_L = -0.3, 0.3
 
@@ -158,8 +163,18 @@ def CV():
 					dir = 2
 					print('Direction : Left')
 				else:
-					dir = 0
-					print('Direction : Forward')
+					if p_midx_avg < (WIDTH // 2) / 4:
+						dir = 2
+						print('Direction : Left')
+
+					elif p_midx_avg > (WIDTH // 2) * 3 / 4:
+						
+						dir = 3
+						print('Direction : Right')
+
+					else:
+						dir = 0
+						print('Direction : Forward')
 
 			print('=' * 100)
 
