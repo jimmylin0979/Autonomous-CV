@@ -2,6 +2,13 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,c++
 
+### Local ###
+
+SS.pptx
+
+/MiddleWare/CV
+/MiddleWare/Ngrok
+
 ### C++ ###
 # Prerequisites
 *.d

@@ -34,7 +34,8 @@ const char* ssid = "realme X3";
 const char* password = "0979268400";
 
 //Your Domain name with URL path or IP address with path
-String serverName = "http://127.0.0.1:5000/direction";
+// String serverName = "http://127.0.0.1:5000/direction";
+String serverName = "http://af6c-112-78-69-144.ngrok.io/direction";
 
 /******************************************************************/
 
@@ -68,7 +69,7 @@ void setup() {
     Serial.println(WiFi.localIP());
 
     //
-    Serial.print("Autonomous Starts ... ");
+    Serial.println("Autonomous Starts ... ");
 }
 
 void loop() {
@@ -79,18 +80,19 @@ void loop() {
     if (WiFi.status() == WL_CONNECTED) {
         //
         HTTPClient http;
+        WiFiClient client;
         String serverPath = serverName;   // + "?temperature=24.37";
 
         // GET from the url
         // Your Domain name with URL path or IP address with path
-        http.begin(serverPath.c_str());
+        http.begin(client, serverPath);
 
         // Send HTTP GET request
         int httpResponseCode = http.GET();
         if (httpResponseCode > 0) {
             Serial.print("HTTP Response code: ");
             Serial.println(httpResponseCode);
-            String payload = http.getString();   // extract the payload from http request
+            payload = http.getString();   // extract the payload from http request
             Serial.println(payload);
         } else {
             Serial.print("Error code: ");
@@ -107,21 +109,26 @@ void loop() {
     }
 
     // Part 2 : determine the direction by the payload we get
-    if (payload == "1") {
+    Serial.print("Server retrun : ");
+    Serial.println(payload);
+
+    if (payload == "0") {
         Serial.println("Forward");
         goForward();
-    } else if (payload == "2") {
+    } else if (payload == "1") {
         goBackward();
-    } else if (payload == "3") {
+    } else if (payload == "2") {
         Serial.println("Left");
         goLeft();
-    } else if (payload == "4") {
+    } else if (payload == "3") {
         Serial.println("Right");
         goRight();
     } else {
         Serial.println("Stop");
         Stop();
     }
+
+    delay(1000);
 }
 
 void wheelControl(int speedL, int speedR) {
@@ -156,27 +163,23 @@ void wheelControl(int speedL, int speedR) {
     // PWM Output
     ledcWrite(pwmChannel1, abs(speedL) + 160);
     ledcWrite(pwmChannel2, abs(speedR) + 160);
-    delay(1000);
+    delay(100);
 }
 
 void goBackward() {
     wheelControl(-45, -55);
-    delay(50);
 }
 
 void goForward() {
     wheelControl(45, 55);
-    delay(50);
 }
 
 void goLeft() {
     wheelControl(-90, 90);
-    delay(50);
 }
 
 void goRight() {
     wheelControl(90, -90);
-    delay(50);
 }
 
 void Stop() {
